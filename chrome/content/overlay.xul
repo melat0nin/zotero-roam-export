@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://zoteroroamexport/locale/overlay.dtd">
+
+<overlay
+    id="zoteroroamexport-overlay"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <stringbundleset>
+        <stringbundle
+            id="zoteroroamexport-bundle"
+            src="chrome://zoteroroamexport/locale/zoteroroamexport.properties"/>
+    </stringbundleset>
+
+    <script
+        type="application/x-javascript"
+        src="chrome://zoteroroamexport/content/roamexport.js"/>
+
+    <popup id="zotero-collectionmenu">
+        <menuitem
+            id="zotero-collectionmenu-roamexport"
+            label="&zotero.roamexport.exportCollections.label;"
+            oncommand="Zotero.RoamExport.exportCollections()"/>
+    </popup>
+
+    <popup
+        id="zotero-itemmenu">
+        <menuitem
+            id="zotero-itemmenu-roamexport"
+            label="&zotero.roamexport.exportItems.label;"
+            oncommand="Zotero.RoamExport.exportItems()"/>
+    </popup>
+</overlay>

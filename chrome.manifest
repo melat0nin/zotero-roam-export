@@ -1,0 +1,5 @@
+content zoteroroamexport chrome/content/
+
+locale  zoteroroamexport  en-GB   chrome/locale/en-GB/
+
+overlay chrome://zotero/content/zoteroPane.xul chrome://zoteroroamexport/content/overlay.xul
