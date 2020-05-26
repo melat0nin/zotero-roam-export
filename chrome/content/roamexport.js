@@ -7,22 +7,14 @@ let isDebug = function() {
 };
 
 zre.init = function() {
-    // let stringBundle = document.getElementById('zoteroroamexport-bundle');
-    // if (stringBundle != null) {
-    //     this._captchaString = stringBundle.getString('captchaString');
-    //     this._citedPrefixString = stringBundle.getString('citedPrefixString');
-    // }
-
-
-    alert('this is a test!');
     // Register the callback in Zotero as an item observer
-    let notifierID = Zotero.Notifier.registerObserver(
-        this.notifierCallback, ['item']);
-
-    // Unregister callback when the window closes (important to avoid a memory leak)
-    window.addEventListener('unload', function(e) {
-        Zotero.Notifier.unregisterObserver(notifierID);
-    }, false);
+    // let notifierID = Zotero.Notifier.registerObserver(
+    //     this.notifierCallback, ['item']);
+    //
+    // // Unregister callback when the window closes (important to avoid a memory leak)
+    // window.addEventListener('unload', function(e) {
+    //     Zotero.Notifier.unregisterObserver(notifierID);
+    // }, false);
 };
 
 // so citation counts will be queried for >all< items that are added to zotero!? o.O
@@ -63,9 +55,9 @@ zre.exportCollections = function() {
 //module.exports = Zotero.RoamExport;
 
 //if (typeof window !== 'undefined') {
-window.addEventListener('load', function(e) {
-    zre.init();
-}, false);
+// window.addEventListener('load', function(e) {
+//     zre.init();
+// }, false);
 
 
 
