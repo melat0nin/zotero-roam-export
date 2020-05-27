@@ -201,7 +201,7 @@ zre.getItemNotes = function(item) {
         var parasArray = note.getNote().split("\n"), // Convert linebreaks to individual nodes/blocks
             thisNoteObj = {},
             noteArray = [];
-        thisNoteObj.string = "**" + note.getNoteTitle() + "**"; // Take first line as note's heading
+        thisNoteObj.string = "**" + parasArray[0] + "**"; // Take first line as note's heading
         for (let para of parasArray) {
             noteArray.push({
                 "string": zre.cleanHtml(para)
@@ -239,7 +239,15 @@ zre.exportItems = function() {
             allItemsData.push(roamItem);
         };
     };
-    if (allItemsData.length) { zre.writeExport(allItemsData); }
+    if (allItemsData.length) {
+        zre.writeExport(allItemsData).then(
+            result => {
+                alert("Export worked!");
+            }
+        ).catch(err => {
+                alert("Export failed: " + err);
+        });
+    };
 };
 
 zre.exportCollections = function() {
@@ -251,14 +259,22 @@ zre.exportCollections = function() {
             allItemsData.push(roamItem);
         };
     };
-    if (allItemsData.length) { zre.writeExport(allItemsData); }
+    if (allItemsData.length) {
+        zre.writeExport(allItemsData).then(
+            result => {
+                alert("Export worked!");
+            }
+        ).catch(err => {
+                alert("Export failed: " + err);
+        });
+    };
 };
 
-zre.writeExport = function(data) {
-    Zotero.debug(JSON.stringify(data, null, "\t"));
+zre.writeExport = async function(data) {
+    //Zotero.debug(JSON.stringify(data, null, "\t"));
     var tmpDir = Zotero.getTempDirectory().path;
     var exportFile = OS.Path.join(tmpDir, "roam-export.json");
-    Zotero.File.putContentsAsync(exportFile, JSON.stringify(data));
+    await Zotero.File.putContentsAsync(exportFile, JSON.stringify(data));
 };
 
 
