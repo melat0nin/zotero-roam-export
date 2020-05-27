@@ -133,7 +133,6 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         if (item.getAttachments().length > 0) {
             var attachments = Zotero.Items.get(item.getAttachments()),
                 attachmentLinks = [];
-            Zotero.debug(attachments);
             for (let attachment of attachments) {
                 if (attachment.attachmentContentType == "application/pdf") {
                     let attString = "[" + attachment._displayTitle + "](zotero://open-pdf/library/items/" + attachment.key + ")";
@@ -242,10 +241,12 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         fp.init(window, "Save Roam export", fp.modeSave);
         fp.appendFilter("Roam JSON", "*.json");
         fp.defaultString = "roam-export.json";
-        Zotero.debug(fp);
         var rv = await fp.show();
 		if (rv == fp.returnOK || rv == fp.returnReplace) {
 			let outputFile = fp.file;
+            if (outputFile.split('.').pop().toLowerCase() != "json") {
+                outputFile += ".json";
+            }
 			Zotero.File.putContentsAsync(outputFile, JSON.stringify(data));
 		}
     }
