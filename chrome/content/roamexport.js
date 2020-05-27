@@ -236,9 +236,18 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
     }
 
     async writeExport(data) {
-        var tmpDir = Zotero.getTempDirectory().path;
-        var exportFile = OS.Path.join(tmpDir, "roam-export.json");
-        await Zotero.File.putContentsAsync(exportFile, JSON.stringify(data));
+        await Zotero.Schema.schemaUpdatePromise;
+        var FilePicker = require('zotero/filePicker').default;
+        var fp = new FilePicker();
+        fp.init(window, "Save Roam export", fp.modeSave);
+        fp.appendFilter("Roam JSON", "*.json");
+        fp.defaultString = "roam-export.json";
+        Zotero.debug(fp);
+        var rv = await fp.show();
+		if (rv == fp.returnOK || rv == fp.returnReplace) {
+			let outputFile = fp.file;
+			Zotero.File.putContentsAsync(outputFile, JSON.stringify(data));
+		}
     }
 
     // async helper to log errors
@@ -248,6 +257,7 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         })
     }
 };
+
 
 //if (!window.Zotero) window.Zotero = {};
 //if (!window.Zotero.RoamExport) window.Zotero.RoamExport = {};
