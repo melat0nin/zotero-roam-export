@@ -205,6 +205,7 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
     }
 
     async exportItems() {
+        await Zotero.Schema.schemaUpdatePromise;
         var items = Zotero.getActiveZoteroPane().getSelectedItems(),
             allItemsData = [];
         for (let item of items) {
@@ -219,6 +220,7 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
     }
 
     async exportCollections() {
+        await Zotero.Schema.schemaUpdatePromise;
         var collection = Zotero.getActiveZoteroPane().getSelectedCollection(),
             allItemsData = [];
         var items = collection.getChildItems();
@@ -234,7 +236,6 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
     }
 
     async writeExport(data) {
-        //Zotero.debug(JSON.stringify(data, null, "\t"));
         var tmpDir = Zotero.getTempDirectory().path;
         var exportFile = OS.Path.join(tmpDir, "roam-export.json");
         await Zotero.File.putContentsAsync(exportFile, JSON.stringify(data));
