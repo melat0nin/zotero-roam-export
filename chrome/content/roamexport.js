@@ -165,24 +165,43 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
 
     getItemNotes(item) {
         var notes = {},
-            itemNotes = Zotero.Items.get(item.getNotes());
+            itemNotes = Zotero.Items.get(item.getNotes()),
+            domParser = Components.classes["@mozilla.org/xmlextras/domparser;1"]
+                .createInstance(Components.interfaces.nsIDOMParser),
+            mapObj = {"<p>":"","</p>":"","<strong>":"**","</strong>":"**","<b>":"**","</b>":"**",
+                "<u>":"","</u>":"","<em>":"__","</em>":"__","<blockquote>":"> ","</blockquote>":""},
+            re = new RegExp(Object.keys(mapObj).join("|"),"gi");
+
+
         notes.string = "Notes";
         notes.heading = 3;
         notes.children = [];
 
         for (let note of itemNotes) {
-            var parasArray = note.getNote().split("\n"), // Convert linebreaks to individual nodes/blocks
-                thisNoteObj = {},
-                noteArray = [];
-            thisNoteObj.string = "**" + note.getNoteTitle() + "**"; // Take first line as note's heading
-            for (let para of parasArray) {
-                noteArray.push({
-                    "string": this.cleanHtml(para)
-                });
-            };
-            noteArray.splice(0, 1); // Don't repeat the first line (been used as heading)
-            thisNoteObj.children = noteArray;
-            notes.children.push(thisNoteObj);
+            var fullDomNote = domParser.parseFromString(note.getNote(), "text/html").body.childNodes, // The note's children
+                thisNoteObject = {}, noteParasArray = [];
+            thisNoteObject.string = "**" + note.getNoteTitle() + "**";
+            for (let para of fullDomNote) {
+                if (para.innerHTML) { // Check paragraph isn't empty
+                    for (let link of para.getElementsByTagName('a')) { // Convert html links to markdown
+                        link.outerHTML = "[" + link.text + "](" + link.href + ")";
+                    }
+
+                    var parsedInner = para.innerHTML.replace(re, function(matched){
+                      return mapObj[matched];
+                    });
+                    para.innerHTML = parsedInner;
+                    if (para.outerHTML.startsWith("<blockquote>")) { para.innerHTML = "> " + para.innerHTML; } // TODO: inelegant!
+                    if (para.outerHTML.startsWith("<li>")) { para.innerHTML = "- " + para.innerHTML; }
+                    if (para.outerHTML.startsWith("<ol>")) { para.innerHTML = "1. " + para.innerHTML; }
+                    noteParasArray.push({
+                        "string": para.textContent
+                    });
+                }
+            }
+            noteParasArray.splice(0, 1); // Remove note title (already stored)
+            thisNoteObject.children = noteParasArray;
+            notes.children.push(thisNoteObject);
         }
         return notes;
     }
