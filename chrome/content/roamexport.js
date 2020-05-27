@@ -7,7 +7,8 @@ zre.itemHasFields = function(item) {
 
 // For parsing note HTML into clean(er) markdown
 zre.cleanHtml = function (html) {
-    // TODO this is hacky as all hell
+    // This is hacky as all hell
+    // TODO: refactor to use DOMParser
     var cleanhtml = html.replace('<strong>', '**')
         .replace('</strong>', '**')
         .replace("<em>", "__")
@@ -111,7 +112,7 @@ zre.getItemAuthors = function(item) {
     }
     authorsString = authorsArray.join(", ");
     return authorsString;
-}
+};
 
 zre.getItemRelatedItems = function(item) {
     var relatedItemUris = item.getRelations()["dc:relation"],
@@ -124,7 +125,7 @@ zre.getItemRelatedItems = function(item) {
     }
 
     return relatedItemsArray;
-}
+};
 
 zre.getItemCollections = function(item) {
     var collectionIds = item.getCollections(), collectionsArray = [];
@@ -133,7 +134,7 @@ zre.getItemCollections = function(item) {
         collectionsArray.push("[[" + collection.name + "]]");
     }
     return collectionsArray;
-}
+};
 
 zre.getItemMetadata = function(item) {
     var metadata = {},
@@ -211,7 +212,7 @@ zre.getItemNotes = function(item) {
         notes.children.push(thisNoteObj);
     }
     return notes;
-}
+};
 
 // Get individual item's data
 zre.gatherItemData = function(item) {
@@ -228,7 +229,7 @@ zre.gatherItemData = function(item) {
     roamItem["edit-time"] = Date.parse(item.getField("dateModified")) / 1000;
 
     return roamItem;
-}
+};
 
 zre.exportItems = function() {
     var items = Zotero.getActiveZoteroPane().getSelectedItems(), allItemsData = [];
@@ -253,13 +254,12 @@ zre.exportCollections = function() {
     if (allItemsData.length) { zre.writeExport(allItemsData); }
 };
 
-
 zre.writeExport = function(data) {
     Zotero.debug(JSON.stringify(data, null, "\t"));
     var tmpDir = Zotero.getTempDirectory().path;
     var exportFile = OS.Path.join(tmpDir, "roam-export.json");
     Zotero.File.putContentsAsync(exportFile, JSON.stringify(data));
-}
+};
 
 
 if (!window.Zotero) window.Zotero = {};
