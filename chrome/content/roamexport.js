@@ -203,6 +203,8 @@ Zotero.RoamResearch = Zotero.RoamResearch || new class {
     };
 
     async exportItems() {
+        await Zotero.Schema.schemaUpdatePromise;
+
         var items = Zotero.getActiveZoteroPane().getSelectedItems(), allItemsData = [];
         for (let item of items) {
             if (this.itemHasFields(item)) {
@@ -214,6 +216,8 @@ Zotero.RoamResearch = Zotero.RoamResearch || new class {
     };
 
     async exportCollections() {
+        await Zotero.Schema.schemaUpdatePromise;
+
         var collection = Zotero.getActiveZoteroPane().getSelectedCollection(), allItemsData = [];
         var items = collection.getChildItems();
         for (let item of items) {
