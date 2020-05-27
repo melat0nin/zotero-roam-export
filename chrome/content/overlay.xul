@@ -11,15 +11,11 @@
             src="chrome://zoteroroamexport/locale/zoteroroamexport.properties"/>
     </stringbundleset>
 
-    <script
-        type="application/x-javascript"
-        src="chrome://zoteroroamexport/content/roamexport.js"/>
-
     <popup id="zotero-collectionmenu">
         <menuitem
             id="zotero-collectionmenu-roamexport"
             label="&zotero.roamexport.exportCollections.label;"
-            oncommand="Zotero.RoamExport.exportCollections()"/>
+            oncommand="Zotero.RoamExport.run('exportCollections')"/>
     </popup>
 
     <popup
@@ -27,6 +23,9 @@
         <menuitem
             id="zotero-itemmenu-roamexport"
             label="&zotero.roamexport.exportItems.label;"
-            oncommand="Zotero.RoamExport.exportItems()"/>
+            oncommand="Zotero.RoamExport.run('exportItems')"/>
     </popup>
+
+    <script src="chrome://zotero/content/include.js"/>
+    <script type="application/x-javascript" src="chrome://zoteroroamexport/content/roamexport.js"/>
 </overlay>
