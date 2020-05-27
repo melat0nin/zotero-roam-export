@@ -9,7 +9,7 @@ Requires Zotero 5.0.
 
 ## Instructions
 
-Right-click an item, items, or collection, and choose `Export to Roam`.
+Right-click an item, items, or collection, and choose `Export to Roam`. Save the export file, and upload into Roam using `Import Files` from the `...` menu. 
 
 ---
 
