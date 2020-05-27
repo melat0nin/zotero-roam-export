@@ -257,15 +257,3 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         })
     }
 };
-
-
-//if (!window.Zotero) window.Zotero = {};
-//if (!window.Zotero.RoamExport) window.Zotero.RoamExport = {};
-// Zotero.RoamExport.exportItems = function() {
-//     Zotero.RoamExport.exportItems();
-// };
-// Zotero.RoamExport.exportCollections = function() {
-//     Zotero.RoamExport.exportCollections();
-// };
-
-//if (typeof module !== 'undefined') module.exports = Zotero.RoamExport;
