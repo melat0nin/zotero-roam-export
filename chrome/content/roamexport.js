@@ -122,7 +122,7 @@ zre.getItemRelatedItems = function(item) {
         var relatedItem = Zotero.Items.get(itemID);
         relatedItemsArray.push("[[" + relatedItem.getField("title") + "]]");
     }
-    
+
     return relatedItemsArray;
 }
 
@@ -200,7 +200,7 @@ zre.getItemNotes = function(item) {
         var parasArray = note.getNote().split("\n"), // Convert linebreaks to individual nodes/blocks
             thisNoteObj = {},
             noteArray = [];
-        thisNoteObj.string = note.getNoteTitle(); // Take first line as note's heading
+        thisNoteObj.string = "**" + note.getNoteTitle() + "**"; // Take first line as note's heading
         for (let para of parasArray) {
             noteArray.push({
                 "string": zre.cleanHtml(para)
@@ -256,6 +256,9 @@ zre.exportCollections = function() {
 
 zre.writeExport = function(data) {
     Zotero.debug(JSON.stringify(data, null, "\t"));
+    var tmpDir = Zotero.getTempDirectory().path;
+    var exportFile = OS.Path.join(tmpDir, "roam-export.json");
+    Zotero.File.putContentsAsync(exportFile, JSON.stringify(data));
 }
 
 
