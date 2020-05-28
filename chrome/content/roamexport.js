@@ -40,27 +40,9 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
             item.getCreators().length > 0;
     }
 
-    cleanHtml(html) { // For parsing note HTML into clean(er) markdown
-        // This is hacky as all hell
-        // TODO: refactor to use DOMParser
-        var cleanhtml = html.replace('<strong>', '**')
-            .replace('</strong>', '**')
-            .replace("<em>", "__")
-            .replace("</em>", "__")
-            .replace("<blockquote>", "> ")
-            .replace("<u>", "^^")
-            .replace("</u>", "^^"); // Convert styles to markdown
-        // TODO ZU.parseMarkup to find anchor tags? https://github.com/zotero/zotero/blob/4.0/chrome/content/zotero/xpcom/utilities.js#L525
-        cleanhtml = cleanhtml.replace(/([^+>]*)[^<]*(<a [^>]*(href="([^>^\"]*)")[^>]*>)([^<]+)(<\/a>[)])/gi, "$1___$2 ([$5]($4))"); // Convert anchors to markdown
-        cleanhtml = cleanhtml.replace(/<[^>]*>?/gm, ""); // Strip remaining tags
-        // TODO retain soft linebreaks within the paragraph
-        return cleanhtml;
-    }
-
     getItemType(item) {
         var zoteroType = Zotero.ItemTypes.getName(item.getField("itemTypeID")),
             type;
-        // Adapted from Zotero RDF translator -- https://github.com/zotero/translators/blob/master/Zotero%20RDF.js
         if (item.url && (item.url.includes("arxiv") || item.url.includes("ssrn"))) {
             return "Preprint";
         } else {
@@ -172,7 +154,6 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
                 "<u>":"","</u>":"","<em>":"__","</em>":"__","<blockquote>":"> ","</blockquote>":""},
             re = new RegExp(Object.keys(mapObj).join("|"),"gi");
 
-
         notes.string = "Notes";
         notes.heading = 3;
         notes.children = [];
@@ -186,7 +167,6 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
                     for (let link of para.getElementsByTagName('a')) { // Convert html links to markdown
                         link.outerHTML = "[" + link.text + "](" + link.href + ")";
                     }
-
                     var parsedInner = para.innerHTML.replace(re, function(matched){
                       return mapObj[matched];
                     });
