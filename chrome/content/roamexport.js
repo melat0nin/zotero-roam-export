@@ -131,12 +131,11 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
                 "string": "URL:: [" + itemUrl + "](" + itemUrl + ")"
             });
         }
-        if (item.getTags().length > 0) {
-            var itemTags = item.getTags();
-            metadata.children.push({
-                "string": "Tags:: " + itemTags.map(o => "#[[" + o.tag + "]]").join(", ")
-            });
-        }
+        var itemTags = item.getTags();
+        itemTags.push({"tag":"ZoteroImport"}); // Always include #ZoteroImport
+        metadata.children.push({
+            "string": "Tags:: " + itemTags.map(o => "#[[" + o.tag + "]]").join(", ")
+        });
         if (item.relatedItems.length > 0) {
             metadata.children.push({
                 "string": "Related:: " + this.getItemRelatedItems(item).join(", ")
