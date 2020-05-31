@@ -112,6 +112,23 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
                 "string": "Date:: " + item.getField("year")
             });
         }
+        if (item.getField("dateAdded")) {
+            const month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            var d = new Date(item.getField("dateAdded"));
+            var nth = function(d) {
+                if (d > 3 && d < 21) return 'th';
+                switch (d % 10) {
+                    case 1:  return "st";
+                    case 2:  return "nd";
+                    case 3:  return "rd";
+                    default: return "th";
+                }
+            }
+            var roamDateAdded = `${(month[d.getMonth()])} ${d.getDate()}${nth(d.getDate())}, ${d.getFullYear()}`;
+            metadata.children.push({
+                "string": "Date added:: " + "[[" + roamDateAdded + "]]"
+            });
+        }
         if (item.getAttachments().length > 0) {
             var attachments = Zotero.Items.get(item.getAttachments()),
                 attachmentLinks = [];
