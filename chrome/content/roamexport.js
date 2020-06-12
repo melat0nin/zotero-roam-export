@@ -50,21 +50,25 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         }
     }
 
-    getItemAuthors(item) {
+    getItemCreators(item, creatorType) {
         var creators = item.getCreators(),
-            authorsArray = [],
-            authorsString;
+            creatorsArray = [],
+            creatorsString;
         for (let creator of creators) {
-            if (creator.creatorTypeID == Zotero.CreatorTypes.getID('author')) {
-                var authString = "";
-                if (creator.firstName) authString += creator.firstName;
-                if (creator.lastName) authString += " " + creator.lastName;
-                authString = "[[" + Zotero.Utilities.trim(authString) + "]]";
-                authorsArray.push(authString);
+            if (creator.creatorTypeID == Zotero.CreatorTypes.getID(creatorType)) {
+                var thisCreatorString = "";
+                if (creator.firstName) thisCreatorString += creator.firstName;
+                if (creator.lastName) thisCreatorString += " " + creator.lastName;
+                thisCreatorString = "[[" + Zotero.Utilities.trim(thisCreatorString) + "]]";
+                creatorsArray.push(thisCreatorString);
             }
         }
-        authorsString = authorsArray.join(", ");
-        return authorsString;
+        if (creatorsArray.length > 0) {
+            creatorsString = creatorsArray.join(", ");
+            return creatorsString;
+        } else {
+            return false;
+        }
     }
 
     getItemRelatedItems(item) {
@@ -97,9 +101,15 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         metadata.heading = 3;
         metadata.children = [];
         if (item.getCreators().length > 0) {
+            var editorsString;
             metadata.children.push({
-                "string": "Author(s):: " + this.getItemAuthors(item)
+                "string": "Author(s):: " + this.getItemCreators(item, 'author')
             });
+            if (editorsString = this.getItemCreators(item, 'editor')) {
+                metadata.children.push({
+                    "string": "Editor(s):: " + editorsString
+                });
+            }
         }
         metadata.children.push({
             "string": "Topics:: " + this.getItemCollections(item).join(", ")
