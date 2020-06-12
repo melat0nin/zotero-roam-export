@@ -96,7 +96,7 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
 
     getItemMetadata(item) {
         var metadata = {},
-            itemAuthors = [];
+            itemType = this.getItemType(item);
         metadata.string = "Metadata";
         metadata.heading = 3;
         metadata.children = [];
@@ -111,11 +111,19 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
                 });
             }
         }
+        if (itemType == 'Chapter') {
+            var bookTitle;
+            if (bookTitle = item.getField('bookTitle')) {
+                metadata.children.push({
+                    "string": "Book title:: [[" + bookTitle + "]]"
+                });
+            }
+        }
         metadata.children.push({
-            "string": "Topics:: " + this.getItemCollections(item).join(", ")
+            "string": "Type:: [[" + itemType + "]]"
         });
         metadata.children.push({
-            "string": "Type:: [[" + this.getItemType(item) + "]]"
+            "string": "Topics:: " + this.getItemCollections(item).join(", ")
         });
         if (item.getField("date")) {
             metadata.children.push({
