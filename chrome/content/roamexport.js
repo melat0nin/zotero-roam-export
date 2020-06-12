@@ -129,6 +129,15 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
                 "string": "Date added:: " + "[[" + roamDateAdded + "]]"
             });
         }
+        if (typeof Zotero.BetterBibTeX === 'object' && Zotero.BetterBibTeX !== null) {
+            var bbtItem = Zotero.BetterBibTeX.KeyManager.get(item.getField('id'));
+            var bbtCiteKey = bbtItem.citekey;
+            if (bbtCiteKey) {
+                metadata.children.push({
+                    "string": "Citekey:: " + bbtCiteKey
+                });    
+            }
+        }
         if (item.getAttachments().length > 0) {
             var attachments = Zotero.Items.get(item.getAttachments()),
                 attachmentLinks = [];

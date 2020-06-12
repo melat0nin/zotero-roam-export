@@ -12,7 +12,7 @@
         RDF:about="urn:mozilla:install-manifest"
         em:id="roamexport@laurenced.org"
         em:name="Zotero Roam Export"
-        em:version="1.2"
+        em:version="1.3"
         em:type="2"
         em:creator="Laurence Diver"
         em:description="Zotero export to Roam"
