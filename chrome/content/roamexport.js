@@ -97,7 +97,7 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
     getItemMetadata(item) {
         var metadata = {},
             itemType = this.getItemType(item);
-        metadata.string = "Metadata";
+        metadata.string = "Metadata::";
         metadata.heading = 3;
         metadata.children = [];
         if (item.getCreators().length > 0) {
@@ -205,7 +205,7 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
                 "<u>":"","</u>":"","<em>":"__","</em>":"__","<blockquote>":"> ","</blockquote>":""},
             re = new RegExp(Object.keys(mapObj).join("|"),"gi");
 
-        notes.string = "Notes";
+        notes.string = "Notes::";
         notes.heading = 3;
         notes.children = [];
 
