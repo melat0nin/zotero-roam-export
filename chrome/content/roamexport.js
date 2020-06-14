@@ -122,6 +122,14 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         metadata.children.push({
             "string": "Type:: [[" + itemType + "]]"
         });
+        if (itemType == 'Article') {
+            var pubTitle;
+            if (pubTitle = item.getField('publicationTitle')) {
+                metadata.children.push({
+                    "string": "Publication:: [[" + pubTitle + "]]"
+                });
+            }
+        }
         metadata.children.push({
             "string": "Topics:: " + this.getItemCollections(item).join(", ")
         });
