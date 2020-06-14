@@ -284,13 +284,13 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         fp.appendFilter("Roam JSON", "*.json");
         fp.defaultString = "roam-export.json";
         var rv = await fp.show();
-		if (rv == fp.returnOK || rv == fp.returnReplace) {
-			let outputFile = fp.file;
+        if (rv == fp.returnOK || rv == fp.returnReplace) {
+            let outputFile = fp.file;
             if (outputFile.split('.').pop().toLowerCase() != "json") {
                 outputFile += ".json";
             }
-			Zotero.File.putContentsAsync(outputFile, JSON.stringify(data));
-		}
+            Zotero.File.putContentsAsync(outputFile, JSON.stringify(data));
+        }
     }
 
     // async helper to log errors
