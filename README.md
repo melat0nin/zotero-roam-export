@@ -7,11 +7,17 @@ A Zotero addon for exporting to Roam's JSON format. Exports single or multiple i
 
 Grab the xpi from the [releases page](https://github.com/melat0nin/zotero-roam-export/releases), and install by choosing `Install Add-on from File...` from the cog menu in Zotero's Add-ons Manager.
 
-Requires Zotero 5.0.
+**Requires Zotero 5.0.**
 
 ## Instructions
 
-Right-click an item, items, or collection, and choose `Export to Roam`. Save the export file, and upload into Roam using `Import Files` from the `...` menu. 
+Right-click an item, items, or collection, and choose `Export to Roam`. Save the export file, and upload into Roam using `Import Files` from the `...` menu.
+
+### Optional features
+
+#### Using an item's citekey as Roam's page title
+
+If you use [Better Bibtex](https://retorque.re/zotero-better-bibtex/), you may wish to export items using their citekeys as the Roam page's title (see discussion of this workflow [here](https://github.com/melat0nin/zotero-roam-export/issues/7)). To enable this, set the `extensions.roamexport.citekey_as_title` option to `true` in Zotero's Config Editor (v1.6+) 
 
 ---
 
