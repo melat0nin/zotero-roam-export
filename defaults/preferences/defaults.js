@@ -1,0 +1,1 @@
+pref("extensions.roamexport.citekey_as_filename", false);

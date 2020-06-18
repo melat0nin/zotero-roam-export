@@ -35,6 +35,15 @@ const typemap = {
 
 
 Zotero.RoamExport = Zotero.RoamExport || new class {
+
+    getPref = function(pref) {
+        return Zotero.Prefs.get('extensions.roamexport.' + pref, true);
+    };
+
+    setPref = function(pref, value) {        
+        Zotero.Prefs.set('extensions.roamexport.' + pref, value, true);
+    };
+
     itemHasFields(item) {
         return item.getField('title') &&
             item.getCreators().length > 0;
