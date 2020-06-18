@@ -1,1 +1,1 @@
-pref("extensions.roamexport.citekey_as_filename", false);
+pref("extensions.roamexport.citekey_as_title", false);

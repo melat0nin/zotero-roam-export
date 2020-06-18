@@ -49,6 +49,25 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
             item.getCreators().length > 0;
     }
 
+    getBBTCiteKey(item) {
+        if (typeof Zotero.BetterBibTeX === 'object' && Zotero.BetterBibTeX !== null) {
+            var bbtItem = Zotero.BetterBibTeX.KeyManager.get(item.getField('id')), 
+                bbtCiteKey = bbtItem.citekey;
+            return bbtCiteKey;
+        }
+        return false;
+    }
+
+    getItemTitle(item) {
+        var title, bbtCiteKey = this.getBBTCiteKey(item);
+        if (this.getPref('citekey_as_title') && bbtCiteKey) { 
+            title = '@' + bbtCiteKey; 
+        } else {
+            title = item.getField('title');
+        }
+        return title;
+    }
+
     getItemType(item) {
         var zoteroType = Zotero.ItemTypes.getName(item.getField("itemTypeID")),
             type;
@@ -85,8 +104,8 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
             relatedItemsArray = [];
 
         for (let uri of relatedItemUris) {
-            var itemID = Zotero.URI.getURIItemID(uri);
-            var relatedItem = Zotero.Items.get(itemID);
+            var itemID = Zotero.URI.getURIItemID(uri),
+                relatedItem = Zotero.Items.get(itemID);
             relatedItemsArray.push("[[" + relatedItem.getField("title") + "]]");
         }
 
@@ -105,7 +124,9 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
 
     getItemMetadata(item) {
         var metadata = {},
-            itemType = this.getItemType(item);
+            itemType = this.getItemType(item),
+            bbtCiteKey = this.getBBTCiteKey(item),
+            citekeyAsTitle = this.getPref('citekey_as_title');
         metadata.string = "Metadata::";
         metadata.heading = 3;
         metadata.children = [];
@@ -119,6 +140,11 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
                     "string": "Editor(s):: " + editorsString
                 });
             }
+        }
+        if (citekeyAsTitle && bbtCiteKey) {
+            metadata.children.push({
+                "string": "Title:: " + item.getField('title')
+            });    
         }
         if (itemType == 'Chapter') {
             var bookTitle;
@@ -164,14 +190,10 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
                 "string": "Date added:: " + "[[" + roamDateAdded + "]]"
             });
         }
-        if (typeof Zotero.BetterBibTeX === 'object' && Zotero.BetterBibTeX !== null) {
-            var bbtItem = Zotero.BetterBibTeX.KeyManager.get(item.getField('id'));
-            var bbtCiteKey = bbtItem.citekey;
-            if (bbtCiteKey) {
-                metadata.children.push({
-                    "string": "Citekey:: " + bbtCiteKey
-                });    
-            }
+        if (bbtCiteKey) {
+            metadata.children.push({
+                "string": "Citekey:: " + bbtCiteKey
+            });
         }
         if (item.getAttachments().length > 0) {
             var attachments = Zotero.Items.get(item.getAttachments()),
@@ -249,7 +271,7 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
     gatherItemData(item) { // Get individual item's data
         var roamItem = {},
             itemChildren = [];
-        roamItem.title = item.getField("title");
+        roamItem.title = this.getItemTitle(item);
         var metadata = this.getItemMetadata(item); // Get item metadata
         itemChildren.push(metadata);
         if (item.getNotes().length) { // Get notes if there
