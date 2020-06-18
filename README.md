@@ -15,9 +15,8 @@ Right-click an item, items, or collection, and choose `Export to Roam`. Save the
 
 ### Optional features
 
-#### Using an item's citekey as Roam's page title
-
-If you use [Better Bibtex](https://retorque.re/zotero-better-bibtex/), you may wish to export items using their citekeys as the Roam page's title (see discussion of this workflow [here](https://github.com/melat0nin/zotero-roam-export/issues/7)). To enable this, set the `extensions.roamexport.citekey_as_title` option to `true` in Zotero's Config Editor (v1.6+) 
+1. **Using an item's citekey as Roam's page title**<br/>
+   If you use [Better Bibtex](https://retorque.re/zotero-better-bibtex/), you may wish to export items using their citekeys as the Roam page's title (see discussion of this workflow [here](https://github.com/melat0nin/zotero-roam-export/issues/7)). To enable this, set the `extensions.roamexport.citekey_as_title` option to `true` in Zotero's Config Editor (v1.6+) 
 
 ---
 
