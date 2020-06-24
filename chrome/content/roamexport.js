@@ -114,11 +114,20 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
 
     getItemCollections(item) {
         var collectionIds = item.getCollections(),
-            collectionsArray = [];
+            collectionsArray = [],
+            recursiveCollections = this.getPref('recursive_collection_topics');
         for (let id of collectionIds) {
             var collection = Zotero.Collections.get(id);
             collectionsArray.push("[[" + collection.name + "]]");
+            if (recursiveCollections) {
+                while (collection.parentID) {
+                    var parentCollection = Zotero.Collections.get(collection.parentID);
+                    collectionsArray.push("[[" + parentCollection.name + "]]");
+                    collection = parentCollection;
+                }
+            }
         }
+        collectionsArray = [...new Set(collectionsArray)];
         return collectionsArray;
     }
 
