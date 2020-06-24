@@ -15,8 +15,11 @@ Right-click an item, items, or collection, and choose `Export to Roam`. Save the
 
 ### Optional features
 
-1. **Using an item's citekey as Roam's page title**<br/>
-   If you use [Better Bibtex](https://retorque.re/zotero-better-bibtex/), you may wish to export items using their citekeys as the Roam page's title (see discussion of this workflow [here](https://github.com/melat0nin/zotero-roam-export/issues/7)). To enable this, set the `extensions.roamexport.citekey_as_title` option to `true` in Zotero's Config Editor (v1.6+) 
+1. **Include recursive collection names as topics**<br/>
+   You can include the names of the full hierarchy of an item's parent collections as topics, which is useful if you nest collections in a taxonomy in Zotero. To enable this, set the `extensions.roamexport.recursive_collection_topics` option to `true` in Zotero's Config Editor (v1.7+).
+
+2. **Using an item's citekey as Roam's page title**<br/>
+   If you use [Better Bibtex](https://retorque.re/zotero-better-bibtex/), you may wish to export items using their citekeys as the Roam page's title (see discussion of this workflow [here](https://github.com/melat0nin/zotero-roam-export/issues/7)). To enable this, set the `extensions.roamexport.citekey_as_title` option to `true` in Zotero's Config Editor (v1.6+).
 
 ---
 
