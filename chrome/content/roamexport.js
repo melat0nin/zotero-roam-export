@@ -137,7 +137,7 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
             bbtCiteKey = this.getBBTCiteKey(item),
             citekeyAsTitle = this.getPref('citekey_as_title');
         metadata.string = "Metadata::";
-        metadata.heading = 3;
+        metadata.heading = 2;
         metadata.children = [];
         if (item.getCreators().length > 0) {
             var editorsString;
@@ -241,36 +241,59 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
             itemNotes = Zotero.Items.get(item.getNotes()),
             domParser = Components.classes["@mozilla.org/xmlextras/domparser;1"]
                 .createInstance(Components.interfaces.nsIDOMParser),
-            mapObj = {"<p>":"","</p>":"","<strong>":"**","</strong>":"**","<b>":"**","</b>":"**",
-                "<u>":"","</u>":"","<em>":"__","</em>":"__","<blockquote>":"> ","</blockquote>":""},
-            re = new RegExp(Object.keys(mapObj).join("|"),"gi");
+            mapObj = {"<p>":"","</p>":"","<strong>":"**","</strong>":"**","<b>":"**","</b>":"**","<u>":"### ","</u>":"","<em>":"__","</em>":"__",
+                "<blockquote>":"> ","</blockquote>":"","<br><br>":"\n\n"},
+            re = new RegExp(Object.keys(mapObj).join("|"),"gi"),
+            indentTagAsChild = this.getPref('indent_tag_as_child');
 
         notes.string = "Notes::";
-        notes.heading = 3;
+        notes.heading = 2;
         notes.children = [];
 
         for (let note of itemNotes) {
-            var fullDomNote = domParser.parseFromString(note.getNote(), "text/html").body.childNodes, // The note's children
-                thisNoteObject = {}, noteParasArray = [];
+            var fullDomNoteBody = domParser.parseFromString(note.getNote(), "text/html").body,
+                fullDomNote = fullDomNoteBody.childNodes, // The note's child paragraphs
+                thisNoteObject = {},
+                noteParasArray = [];
             thisNoteObject.string = "**" + note.getNoteTitle() + "**";
-            for (let para of fullDomNote) {
-                if (para.innerHTML) { // Check paragraph isn't empty
+
+            for (let i=0; i < fullDomNote.length; i++) { // Remove empty paragraphs
+                var thisPara = fullDomNote[i];
+                if (thisPara.nodeType != 1) fullDomNoteBody.removeChild(thisPara);
+            }
+            for (let i=0; i < fullDomNote.length; i++) {
+                var para = fullDomNote[i];
+                if (para.innerHTML) {
+                    noteParasArray[i] = {};
                     for (let link of para.getElementsByTagName('a')) { // Convert html links to markdown
                         link.outerHTML = "[" + link.text + "](" + link.href + ")";
                     }
+                    if (this.getPref('convert_underline_to_heading')) {
+                        for (let underline of para.getElementsByTagName('u')) { // Convert html links to markdown
+                            underline.outerHTML = "**" + underline.textContent + "**";
+                            noteParasArray[i].heading = 3;
+                        }
+                    }  
                     var parsedInner = para.innerHTML.replace(re, function(matched){
                       return mapObj[matched];
                     });
                     para.innerHTML = parsedInner;
-                    if (para.outerHTML.startsWith("<blockquote>")) { para.innerHTML = "> " + para.innerHTML; } // TODO: inelegant!
-                    if (para.outerHTML.startsWith("<li>")) { para.innerHTML = "- " + para.innerHTML; }
+                    if (para.outerHTML.startsWith("<li>")) { para.innerHTML = "- " + para.innerHTML; } // TODO: inelegant!
                     if (para.outerHTML.startsWith("<ol>")) { para.innerHTML = "1. " + para.innerHTML; }
-                    noteParasArray.push({
-                        "string": para.textContent
-                    });
+                    
+                    if (indentTagAsChild && indentTagAsChild.length > 0) {
+                        var prevParaIndex = i-1; 
+                        if (para.outerHTML.startsWith(indentTagAsChild)) { 
+                            noteParasArray[prevParaIndex].children = [{ "string": para.innerHTML }];
+                            noteParasArray.splice(i,1); // Remove object temporarily instantiated for this paragraph 
+                            continue;
+                        }
+                    }
+                    noteParasArray[i].string = para.textContent;
                 }
             }
             noteParasArray.splice(0, 1); // Remove note title (already stored)
+            noteParasArray = noteParasArray.filter(Boolean); // Remove any empty array items
             thisNoteObject.children = noteParasArray;
             notes.children.push(thisNoteObject);
         }
