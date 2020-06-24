@@ -134,11 +134,17 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
     getItemMetadata(item) {
         var metadata = {},
             itemType = this.getItemType(item),
+            itemLinks = [],
+            localURL = "[Local library](zotero://select/library/items/" + item.key + ")",
+            cloudURL = "[Web library](https://www.zotero.org/users/" + Zotero.Users.getCurrentUserID() + "/items/" + item.key + ")",
+            itemLinks = [localURL, cloudURL],
             bbtCiteKey = this.getBBTCiteKey(item),
             citekeyAsTitle = this.getPref('citekey_as_title');
         metadata.string = "Metadata::";
         metadata.heading = 2;
         metadata.children = [];
+        
+        //itemLinks.push(localURL, cloudURL);
         if (item.getCreators().length > 0) {
             var editorsString;
             metadata.children.push({
@@ -209,14 +215,17 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
                 attachmentLinks = [];
             for (let attachment of attachments) {
                 if (attachment.attachmentContentType == "application/pdf") {
-                    let attString = "[" + attachment._displayTitle + "](zotero://open-pdf/library/items/" + attachment.key + ")";
+                    let attName = attachment._displayTitle;
+                    if (attName.length > 30) attName = attName.substr(0, 25) + "....pdf";
+                    let attString = "[" + attName + "](zotero://open-pdf/library/items/" + attachment.key + ")";
                     attachmentLinks.push(attString);
                 }
             }
-            metadata.children.push({
-                "string": "Zotero PDF(s):: " + attachmentLinks.join(", ")
-            });
+            itemLinks.push(attachmentLinks.join(", "));
         }
+        metadata.children.push({
+            "string": "Zotero links:: " + itemLinks.join(", ")
+        });
         if (item.getField("url")) {
             var itemUrl = item.getField("url");
             metadata.children.push({
