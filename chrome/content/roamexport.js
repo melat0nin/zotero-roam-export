@@ -264,9 +264,9 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
                 fullDomNote = fullDomNoteBody.childNodes, // The note's child paragraphs
                 thisNoteObject = {},
                 noteParasArray = [];
-            thisNoteObject.string = "**" + note.getNoteTitle() + "**";
+            thisNoteObject.string = "**" + note.getNoteTitle() + "**"; // Make the first line the note's parent
 
-            for (let i=0; i < fullDomNote.length; i++) { // Remove empty paragraphs
+            for (let i=0; i < fullDomNote.length; i++) { // First remove empty paragraphs
                 var thisPara = fullDomNote[i];
                 if (thisPara.nodeType != 1) fullDomNoteBody.removeChild(thisPara);
             }
@@ -290,7 +290,7 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
                     if (para.outerHTML.startsWith("<li>")) { para.innerHTML = "- " + para.innerHTML; } // TODO: inelegant!
                     if (para.outerHTML.startsWith("<ol>")) { para.innerHTML = "1. " + para.innerHTML; }
                     
-                    if (indentTagAsChild && indentTagAsChild.length > 0) {
+                    if (indentTagAsChild && indentTagAsChild.length > 0 && i > 0) {
                         var prevParaIndex = i-1; 
                         if (para.outerHTML.startsWith(indentTagAsChild)) { 
                             noteParasArray[prevParaIndex].children = [{ "string": para.innerHTML }];
