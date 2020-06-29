@@ -61,7 +61,7 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
     getItemTitle(item) {
         var title, bbtCiteKey = this.getBBTCiteKey(item);
         if (this.getPref('citekey_as_title') && bbtCiteKey) { 
-            title = '@' + bbtCiteKey; 
+            title = `@${bbtCiteKey}`; 
         } else {
             title = item.getField('title');
         }
@@ -87,7 +87,7 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
                 var thisCreatorString = "";
                 if (creator.firstName) thisCreatorString += creator.firstName;
                 if (creator.lastName) thisCreatorString += " " + creator.lastName;
-                thisCreatorString = "[[" + Zotero.Utilities.trim(thisCreatorString) + "]]";
+                thisCreatorString = `[[${Zotero.Utilities.trim(thisCreatorString)}]]`;
                 creatorsArray.push(thisCreatorString);
             }
         }
@@ -118,11 +118,11 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
             recursiveCollections = this.getPref('recursive_collection_topics');
         for (let id of collectionIds) {
             var collection = Zotero.Collections.get(id);
-            collectionsArray.push("[[" + collection.name + "]]");
+            collectionsArray.push(`[[${collection.name}]]`);
             if (recursiveCollections) {
                 while (collection.parentID) {
                     var parentCollection = Zotero.Collections.get(collection.parentID);
-                    collectionsArray.push("[[" + parentCollection.name + "]]");
+                    collectionsArray.push(`[[${parentCollection.name}]]`);
                     collection = parentCollection;
                 }
             }
@@ -135,8 +135,8 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         var metadata = {},
             itemType = this.getItemType(item),
             itemLinks = [],
-            localURL = "[Local library](zotero://select/library/items/" + item.key + ")",
-            cloudURL = "[Web library](https://www.zotero.org/users/" + Zotero.Users.getCurrentUserID() + "/items/" + item.key + ")",
+            localURL = `[Local library](zotero://select/library/items/${item.key})`,
+            cloudURL = `[Web library](https://www.zotero.org/users/${Zotero.Users.getCurrentUserID()}/items/${item.key})`,
             itemLinks = [localURL, cloudURL],
             bbtCiteKey = this.getBBTCiteKey(item),
             citekeyAsTitle = this.getPref('citekey_as_title');
@@ -144,48 +144,47 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         metadata.heading = 2;
         metadata.children = [];
         
-        //itemLinks.push(localURL, cloudURL);
         if (item.getCreators().length > 0) {
             var editorsString;
             metadata.children.push({
-                "string": "Author(s):: " + this.getItemCreators(item, 'author')
+                "string": `Author(s):: ${this.getItemCreators(item, 'author')}`
             });
             if (editorsString = this.getItemCreators(item, 'editor')) {
                 metadata.children.push({
-                    "string": "Editor(s):: " + editorsString
+                    "string": `Editor(s):: ${editorsString}`
                 });
             }
         }
         if (citekeyAsTitle && bbtCiteKey) {
             metadata.children.push({
-                "string": "Title:: " + item.getField('title')
+                "string": `Title:: ${item.getField('title')}`
             });    
         }
         if (itemType == 'Chapter') {
             var bookTitle;
             if (bookTitle = item.getField('bookTitle')) {
                 metadata.children.push({
-                    "string": "Book title:: [[" + bookTitle + "]]"
+                    "string": `Book title:: [[${bookTitle}]]`
                 });
             }
         }
         metadata.children.push({
-            "string": "Type:: [[" + itemType + "]]"
+            "string": `Type:: [[${itemType}]]`
         });
         if (itemType == 'Article') {
             var pubTitle;
             if (pubTitle = item.getField('publicationTitle')) {
                 metadata.children.push({
-                    "string": "Publication:: [[" + pubTitle + "]]"
+                    "string": `Publication:: [[${pubTitle}]]`
                 });
             }
         }
         metadata.children.push({
-            "string": "Topics:: " + this.getItemCollections(item).join(", ")
+            "string": `Topics:: ${this.getItemCollections(item).join(", ")}`
         });
         if (item.getField("date")) {
             metadata.children.push({
-                "string": "Date:: " + item.getField("year")
+                "string": `Date:: ${item.getField("year")}`
             });
         }
         if (item.getField("dateAdded")) {
@@ -202,12 +201,12 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
             }
             var roamDateAdded = `${(month[d.getMonth()])} ${d.getDate()}${nth(d.getDate())}, ${d.getFullYear()}`;
             metadata.children.push({
-                "string": "Date added:: " + "[[" + roamDateAdded + "]]"
+                "string": `Date added:: [[${roamDateAdded}]]`
             });
         }
         if (bbtCiteKey) {
             metadata.children.push({
-                "string": "Citekey:: " + bbtCiteKey
+                "string": `Citekey:: ${bbtCiteKey}`
             });
         }
         if (item.getAttachments().length > 0) {
@@ -224,18 +223,18 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
             itemLinks.push(attachmentLinks.join(", "));
         }
         metadata.children.push({
-            "string": "Zotero links:: " + itemLinks.join(", ")
+            "string": `Zotero links:: ${itemLinks.join(", ")}`
         });
         if (item.getField("url")) {
             var itemUrl = item.getField("url");
             metadata.children.push({
-                "string": "URL:: [" + itemUrl + "](" + itemUrl + ")"
+                "string": `URL:: [${itemUrl}](${itemUrl})`
             });
         }
         var itemTags = item.getTags();
         itemTags.push({"tag":"ZoteroImport"}); // Always include #ZoteroImport
         metadata.children.push({
-            "string": "Tags:: " + itemTags.map(o => "#[[" + o.tag + "]]").join(", ")
+            "string": "Tags:: " + itemTags.map(o => `#[[${o.tag}]]`).join(", ")
         });
         if (item.relatedItems.length > 0) {
             metadata.children.push({
@@ -264,7 +263,7 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
                 fullDomNote = fullDomNoteBody.childNodes, // The note's child paragraphs
                 thisNoteObject = {},
                 noteParasArray = [];
-            thisNoteObject.string = "**" + note.getNoteTitle() + "**"; // Make the first line the note's parent
+            thisNoteObject.string = `**${note.getNoteTitle()}**`; // Make the first line the note's parent
 
             for (let i=0; i < fullDomNote.length; i++) { // First remove empty paragraphs
                 var thisPara = fullDomNote[i];
@@ -275,11 +274,11 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
                 if (para.innerHTML) {
                     noteParasArray[i] = {};
                     for (let link of para.getElementsByTagName('a')) { // Convert html links to markdown
-                        link.outerHTML = "[" + link.text + "](" + link.href + ")";
+                        link.outerHTML = `[${link.text}](${link.href})`;
                     }
                     if (this.getPref('convert_underline_to_heading')) {
                         for (let underline of para.getElementsByTagName('u')) { // Convert html links to markdown
-                            underline.outerHTML = "**" + underline.textContent + "**";
+                            underline.outerHTML = `**${underline.textContent}**`;
                             noteParasArray[i].heading = 3;
                         }
                     }  
@@ -287,8 +286,8 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
                       return mapObj[matched];
                     });
                     para.innerHTML = parsedInner;
-                    if (para.outerHTML.startsWith("<li>")) { para.innerHTML = "- " + para.innerHTML; } // TODO: inelegant!
-                    if (para.outerHTML.startsWith("<ol>")) { para.innerHTML = "1. " + para.innerHTML; }
+                    if (para.outerHTML.startsWith("<li>")) { para.innerHTML = `- ${para.innerHTML}`; } // TODO: inelegant!
+                    if (para.outerHTML.startsWith("<ol>")) { para.innerHTML = `1. ${para.innerHTML}`; }
                     
                     if (indentTagAsChild && indentTagAsChild.length > 0 && i > 0) {
                         var prevParaIndex = i-1; 
