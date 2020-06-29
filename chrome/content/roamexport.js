@@ -217,8 +217,9 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
             for (let attachment of attachments) {
                 if (attachment.attachmentContentType == "application/pdf") {
                     let attName = attachment._displayTitle;
-                    if (attName.length > 30) attName = attName.substr(0, 25) + "....pdf";
-                    let attString = "[" + attName + "](zotero://open-pdf/library/items/" + attachment.key + ")";
+                    if (attName.length > 30) attName = `${attName.substr(0, 25)}....pdf`;
+                    if (attachment.attachmentLinkMode == 2) attName += " \u{1f517}";
+                    let attString = `[${attName}](zotero://open-pdf/library/items/${attachment.key})`;
                     attachmentLinks.push(attString);
                 }
             }
