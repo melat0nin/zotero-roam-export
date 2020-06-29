@@ -106,7 +106,9 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         for (let uri of relatedItemUris) {
             var itemID = Zotero.URI.getURIItemID(uri),
                 relatedItem = Zotero.Items.get(itemID);
-            relatedItemsArray.push("[[" + relatedItem.getField("title") + "]]");
+            relatedItemsArray.push({
+                "string": `[[${relatedItem.getField("title")}]]`
+            });
         }
 
         return relatedItemsArray;
@@ -238,7 +240,8 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         });
         if (item.relatedItems.length > 0) {
             metadata.children.push({
-                "string": "Related:: " + this.getItemRelatedItems(item).join(", ")
+                "string": "Related::",
+                "children": this.getItemRelatedItems(item)
             });
         }
         return metadata;
