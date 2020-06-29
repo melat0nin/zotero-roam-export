@@ -215,9 +215,10 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
             var attachments = Zotero.Items.get(item.getAttachments()),
                 attachmentLinks = [];
             for (let attachment of attachments) {
-                if (attachment.attachmentContentType == "application/pdf") {
-                    let attName = attachment._displayTitle;
-                    if (attName.length > 30) attName = `${attName.substr(0, 25)}....pdf`;
+                let attachmentType = attachment.attachmentContentType;
+                if (attachmentType == "application/pdf" || attachmentType == "application/epub+zip") {
+                    let attName = attachment._displayTitle, attExt = attachment.attachmentFilename.split('.').pop();
+                    if (attName.length > 30) attName = `${attName.substr(0, 25)}....${attExt}`;
                     if (attachment.attachmentLinkMode == 2) attName += " \u{1f517}";
                     let attString = `[${attName}](zotero://open-pdf/library/items/${attachment.key})`;
                     attachmentLinks.push(attString);
