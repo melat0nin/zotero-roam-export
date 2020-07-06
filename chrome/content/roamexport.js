@@ -137,6 +137,7 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         var metadata = {},
             itemType = this.getItemType(item),
             itemLinks = [],
+            itemAbstract = item.getField('abstractNote'),
             localURL = `[Local library](zotero://select/library/items/${item.key})`,
             cloudURL = `[Web library](https://www.zotero.org/users/${Zotero.Users.getCurrentUserID()}/items/${item.key})`,
             itemLinks = [localURL, cloudURL],
@@ -180,6 +181,12 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
                     "string": `Publication:: [[${pubTitle}]]`
                 });
             }
+        }
+        if (itemAbstract && itemAbstract.length > 1) {
+            metadata.children.push({
+                "string": "Abstract::",
+                "children": [{"string": itemAbstract}]
+            });    
         }
         metadata.children.push({
             "string": `Topics:: ${this.getItemCollections(item).join(", ")}`
