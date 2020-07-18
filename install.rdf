@@ -16,14 +16,15 @@
         em:type="2"
         em:creator="Laurence Diver"
         em:description="Zotero export to Roam"
-        em:homepageURL="https://github.com/melat0nin/zotero-roam-export">
+        em:homepageURL="https://github.com/melat0nin/zotero-roam-export"
+        em:updateURL="https://raw.githubusercontent.com/melat0nin/zotero-roam-export/master/update.rdf">
         <em:type>2</em:type>
         <em:targetApplication RDF:resource="rdf:#$x61SL3"/>
         <em:targetApplication>
             <Description>
                 <em:id>zotero@chnm.gmu.edu</em:id>
-                <em:minVersion>4.0</em:minVersion>
-                <em:maxVersion>5.0.*</em:maxVersion>
+                <em:minVersion>5.0.0</em:minVersion>
+                <em:maxVersion>5.*</em:maxVersion>
             </Description>
         </em:targetApplication>
     </RDF:Description>
