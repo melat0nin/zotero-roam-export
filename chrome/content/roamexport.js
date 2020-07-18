@@ -57,6 +57,10 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         var title, bbtCiteKey = this.getBBTCiteKey(item);
         if (this.getPref('citekey_as_title') && bbtCiteKey) { 
             title = `@${bbtCiteKey}`; 
+        } else if (this.getItemType(item) == "Legal case") {
+            title = item.getField('caseName');
+        } else if (this.getItemType(item) == "Legislation") {
+            title = item.getField('nameOfAct');
         } else {
             title = item.getField('title');
         }
@@ -64,8 +68,7 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
     }
 
     getItemType(item) {
-        var zoteroType = Zotero.ItemTypes.getName(item.getField("itemTypeID")),
-            type;
+        var zoteroType = Zotero.ItemTypes.getName(item.getField("itemTypeID"));
         if (item.url && (item.url.includes("arxiv") || item.url.includes("ssrn"))) {
             return "Preprint";
         } else {
