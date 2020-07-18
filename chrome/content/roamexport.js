@@ -44,11 +44,6 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         Zotero.Prefs.set('extensions.roamexport.' + pref, value, true);
     }
 
-    itemHasFields(item) {
-        return item.getField('title') &&
-            item.getCreators().length > 0;
-    }
-
     getBBTCiteKey(item) {
         if (typeof Zotero.BetterBibTeX === 'object' && Zotero.BetterBibTeX !== null) {
             var bbtItem = Zotero.BetterBibTeX.KeyManager.get(item.getField('id')), 
@@ -148,13 +143,15 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         metadata.children = [];
         
         if (item.getCreators().length > 0) {
-            var editorsString;
-            metadata.children.push({
-                "string": `Author(s):: ${this.getItemCreators(item, 'author')}`
-            });
-            if (editorsString = this.getItemCreators(item, 'editor')) {
+            var creatorsString;
+            if (creatorsString = this.getItemCreators(item, 'author')) {
                 metadata.children.push({
-                    "string": `Editor(s):: ${editorsString}`
+                    "string": `Author(s):: ${creatorsString}`
+                });
+            }
+            if (creatorsString = this.getItemCreators(item, 'editor')) {
+                metadata.children.push({
+                    "string": `Editor(s):: ${creatorsString}`
                 });
             }
         }
@@ -244,7 +241,7 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
             });
         }
         var itemTags = item.getTags();
-        itemTags.push({"tag":"ZoteroImport"}); // Always include #ZoteroImport
+        itemTags.push({"tag":"ZoteroImport"}); // Always include #ZoteroImport tag
         metadata.children.push({
             "string": "Tags:: " + itemTags.map(o => `#[[${o.tag}]]`).join(", ")
         });
@@ -337,16 +334,21 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         return roamItem;
     }
 
-    async exportItems() {
-        await Zotero.Schema.schemaUpdatePromise;
-        var items = Zotero.getActiveZoteroPane().getSelectedItems(),
-            allItemsData = [];
+    getAllItemsData(items) {
+        var allItemsData = [];
         for (let item of items) {
-            if (this.itemHasFields(item)) {
-                var roamItem = this.gatherItemData(item);
+            let roamItem;
+            if (roamItem = this.gatherItemData(item)) {
                 allItemsData.push(roamItem);
             };
         };
+        return allItemsData;
+    }
+
+    async exportItems() {
+        await Zotero.Schema.schemaUpdatePromise;
+        var items = Zotero.getActiveZoteroPane().getSelectedItems();
+        var allItemsData = this.getAllItemsData(items);
         if (allItemsData.length) {
             await this.writeExport(allItemsData);
         };
@@ -354,15 +356,9 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
 
     async exportCollections() {
         await Zotero.Schema.schemaUpdatePromise;
-        var collection = Zotero.getActiveZoteroPane().getSelectedCollection(),
-            allItemsData = [];
+        var collection = Zotero.getActiveZoteroPane().getSelectedCollection();
         var items = collection.getChildItems();
-        for (let item of items) {
-            if (this.itemHasFields(item)) {
-                var roamItem = this.gatherItemData(item);
-                allItemsData.push(roamItem);
-            };
-        };
+        var allItemsData = this.getAllItemsData(items);
         if (allItemsData.length) {
             await this.writeExport(allItemsData);
         }
