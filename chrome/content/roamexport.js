@@ -76,25 +76,30 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         }
     }
 
-    getItemCreators(item, creatorType) {
+    getItemCreators(item) {
         var creators = item.getCreators(),
-            creatorsArray = [],
-            creatorsString;
+            creatorTypesObj = {},
+            creatorTypesArray = [];
         for (let creator of creators) {
-            if (creator.creatorTypeID == Zotero.CreatorTypes.getID(creatorType)) {
-                var thisCreatorString = "";
-                if (creator.firstName) thisCreatorString += creator.firstName;
-                if (creator.lastName) thisCreatorString += " " + creator.lastName;
-                thisCreatorString = `[[${Zotero.Utilities.trim(thisCreatorString)}]]`;
-                creatorsArray.push(thisCreatorString);
-            }
+            let creatorTypeString = Zotero.CreatorTypes.getName(creator.creatorTypeID);
+            creatorTypeString = `${Zotero.Utilities.Internal.camelToTitleCase(creatorTypeString)}(s)`;
+            if (creatorTypesObj[creatorTypeString] === undefined) {
+                creatorTypesObj[creatorTypeString] = [];
+            };
+            let thisCreatorString = "";
+            if (creator.firstName) thisCreatorString += creator.firstName;
+            if (creator.lastName) thisCreatorString += " " + creator.lastName;
+            thisCreatorString = `[[${Zotero.Utilities.trim(thisCreatorString)}]]`;
+            creatorTypesObj[creatorTypeString].push(thisCreatorString);
         }
-        if (creatorsArray.length > 0) {
-            creatorsString = creatorsArray.join(", ");
-            return creatorsString;
-        } else {
-            return false;
+        for (let [creatorType, thisCreatorTypeArray] of Object.entries(creatorTypesObj)) {
+            Zotero.debug(creatorType);
+            Zotero.debug(thisCreatorTypeArray);
+            creatorTypesArray.push({
+                "string": `${creatorType}:: ${thisCreatorTypeArray.join(", ")}`
+            });
         }
+        return creatorTypesArray;        
     }
 
     getItemRelatedItems(item) {
@@ -139,23 +144,16 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
             localURL = `[Local library](zotero://select/library/items/${item.key})`,
             cloudURL = `[Web library](https://www.zotero.org/users/${Zotero.Users.getCurrentUserID()}/items/${item.key})`,
             itemLinks = [localURL, cloudURL],
+            itemCreators = this.getItemCreators(item),
             bbtCiteKey = this.getBBTCiteKey(item),
             citekeyAsTitle = this.getPref('citekey_as_title');
         metadata.string = "Metadata::";
         metadata.heading = 2;
         metadata.children = [];
         
-        if (item.getCreators().length > 0) {
-            var creatorsString;
-            if (creatorsString = this.getItemCreators(item, 'author')) {
-                metadata.children.push({
-                    "string": `Author(s):: ${creatorsString}`
-                });
-            }
-            if (creatorsString = this.getItemCreators(item, 'editor')) {
-                metadata.children.push({
-                    "string": `Editor(s):: ${creatorsString}`
-                });
+        if (itemCreators.length > 0) {
+            for (let creatorType of itemCreators) {
+                metadata.children.push(creatorType);
             }
         }
         if (citekeyAsTitle && bbtCiteKey) {
