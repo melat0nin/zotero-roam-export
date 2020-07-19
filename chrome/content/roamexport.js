@@ -83,9 +83,7 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         for (let creator of creators) {
             let creatorTypeString = Zotero.CreatorTypes.getName(creator.creatorTypeID);
             creatorTypeString = `${Zotero.Utilities.Internal.camelToTitleCase(creatorTypeString)}(s)`;
-            if (creatorTypesObj[creatorTypeString] === undefined) {
-                creatorTypesObj[creatorTypeString] = [];
-            };
+            if (creatorTypesObj[creatorTypeString] === undefined) creatorTypesObj[creatorTypeString] = [];
             let thisCreatorString = "";
             if (creator.firstName) thisCreatorString += creator.firstName;
             if (creator.lastName) thisCreatorString += " " + creator.lastName;
@@ -93,8 +91,6 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
             creatorTypesObj[creatorTypeString].push(thisCreatorString);
         }
         for (let [creatorType, thisCreatorTypeArray] of Object.entries(creatorTypesObj)) {
-            Zotero.debug(creatorType);
-            Zotero.debug(thisCreatorTypeArray);
             creatorTypesArray.push({
                 "string": `${creatorType}:: ${thisCreatorTypeArray.join(", ")}`
             });
@@ -113,7 +109,6 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
                 "string": `[[${relatedItem.getField("title")}]]`
             });
         }
-
         return relatedItemsArray;
     }
 
@@ -331,7 +326,6 @@ Zotero.RoamExport = Zotero.RoamExport || new class {
         }
         roamItem.children = itemChildren;
         roamItem["edit-time"] = Date.parse(item.getField("dateModified")) / 1000;
-
         return roamItem;
     }
 
