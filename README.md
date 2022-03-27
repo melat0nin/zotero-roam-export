@@ -1,3 +1,5 @@
+**I don't maintain this add-on anymore: I've moved from Roam to the free and open source [logseq](https://github.com/logseq), a project with a better ethos and trajectory than Roam's. It also has native Zotero integration which is much more sophisticated than this add-on.**
+
 # Zotero to Roam Export
 **A Zotero addon for exporting to Roam's JSON format. Exports single or multiple items, as well as collections.**
 
